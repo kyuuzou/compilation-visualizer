@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEditor.Compilation;
@@ -24,12 +25,18 @@ namespace Needle.CompilationVisualizer {
     
     internal class JsonExporter : IPostprocessBuildWithReport {
         
-        public int callbackOrder => 0;
+        public int callbackOrder => int.MaxValue;
 
         public void OnPostprocessBuild(BuildReport report) {
-            
+            // Terrible hack to give Unity enough time to export fullprofile.json
+            Thread.Sleep(1000);
+            ExportToJson();
         }
-        
+
+        internal static void ExportToJson() {
+            ExportToJson(CompilationData.GetAll());
+        }
+
         internal static void ExportToJson(CompilationData.IterativeCompilationData iterativeData) {
             AssemblyExportData exportData = new AssemblyExportData();
 
