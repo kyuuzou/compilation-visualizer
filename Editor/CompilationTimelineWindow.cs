@@ -272,6 +272,12 @@ namespace Needle.CompilationVisualizer
                 GUIUtility.ExitGUI();
             }
 
+            if (GUILayout.Button("Export to JSON", EditorStyles.toolbarButton)) 
+            {
+                ExportToJson(data);
+                GUIUtility.ExitGUI();
+            }
+
             var buttonRect = GUILayoutUtility.GetLastRect();
             if (EditorGUILayout.DropdownButton(new GUIContent(""), FocusType.Passive, EditorStyles.toolbarDropDown))
             {
@@ -1059,6 +1065,53 @@ namespace Needle.CompilationVisualizer
                 
                 Cancel();
             }
+        }
+        
+        [Serializable]
+        internal class AssemblyExportData {
+
+            [Serializable]
+            internal class DataEntry {
+                public string Name;
+                public double Duration;
+                public List<string> References = new List<string>();
+                public List<string> Dependants = new List<string>();
+            }
+        
+            public List<DataEntry> Entries = new List<DataEntry>();
+        }
+        
+        private void ExportToJson(IterativeCompilationData iterativeData) {
+            AssemblyExportData exportData = new AssemblyExportData();
+
+            foreach (CompilationData compilationData in iterativeData.iterations) {
+                foreach (AssemblyCompilationData assemblyData in compilationData.compilationData) {
+                    AssemblyExportData.DataEntry entry = new AssemblyExportData.DataEntry {
+                        Name = Path.GetFileName(assemblyData.assembly),
+                        Duration = (assemblyData.EndTime - assemblyData.StartTime).TotalSeconds
+                    };
+
+                    if (AssemblyDependencyDict.TryGetValue(assemblyData.assembly, out Assembly assembly)) {
+                        foreach (Assembly reference in assembly.assemblyReferences) {
+                            entry.References.Add(reference.name);
+                        }
+                    }
+
+                    if (AssemblyDependantDict.TryGetValue(assemblyData.assembly, out List<Assembly> dependantList)) {
+                        foreach (Assembly dependant in dependantList) {
+                            entry.Dependants.Add(dependant.name);
+                        }
+                    }
+                    
+                    exportData.Entries.Add(entry);
+                }
+            }
+
+            string jsonString = JsonUtility.ToJson(exportData, true);
+            string path = "../Logs/compilation_timeline.json";
+            File.WriteAllText(path, jsonString);
+            
+            Debug.Log($"Exported compilation timeline to {Path.GetFullPath(path)}: {jsonString}");
         }
     }
 }
