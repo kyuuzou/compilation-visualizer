@@ -15,7 +15,8 @@ namespace Needle.CompilationVisualizer {
         [Serializable]
         internal class DataEntry {
             public string Name;
-            public double Duration;
+            public double DurationInSeconds;
+            public long StartTimeInTicks;
             public List<string> References = new List<string>();
             public List<string> Dependants = new List<string>();
         }
@@ -44,7 +45,8 @@ namespace Needle.CompilationVisualizer {
                 foreach (AssemblyCompilationData assemblyData in compilationData.compilationData) {
                     AssemblyExportData.DataEntry entry = new AssemblyExportData.DataEntry {
                         Name = Path.GetFileName(assemblyData.assembly),
-                        Duration = (assemblyData.EndTime - assemblyData.StartTime).TotalSeconds
+                        DurationInSeconds = (assemblyData.EndTime - assemblyData.StartTime).TotalSeconds,
+                        StartTimeInTicks = assemblyData.StartTime.Ticks
                     };
 
                     if (CompilationTimelineWindow.AssemblyDependencyDict.TryGetValue(assemblyData.assembly, out Assembly assembly)) {
