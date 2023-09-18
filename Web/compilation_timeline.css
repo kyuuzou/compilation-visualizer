@@ -98,3 +98,13 @@ button {
 	margin-left: 10px;
     font-size: 1.1em;
 }
+
+.entry-container:hover .text-above {
+    color: yellow !important;
+    cursor: pointer;
+}
+
+.entry-container:hover span {
+    background-image: linear-gradient(to right, rgb(219, 219, 219) 0%, rgb(255, 255, 255) 100%);
+    cursor: pointer;
+}
