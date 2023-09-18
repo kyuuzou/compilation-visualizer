@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -22,6 +23,7 @@ namespace Needle.CompilationVisualizer {
         }
         
         public List<DataEntry> Entries = new List<DataEntry>();
+        public double TotalDurationInSeconds;
     }
     
     internal class JsonExporter : IPostprocessBuildWithReport {
@@ -40,7 +42,9 @@ namespace Needle.CompilationVisualizer {
 
         internal static void ExportToJson(CompilationData.IterativeCompilationData iterativeData) {
             AssemblyExportData exportData = new AssemblyExportData();
-
+            TimeSpan compilationTimeSpan = iterativeData.iterations.Last().CompilationFinished - iterativeData.iterations.First().CompilationStarted;
+            exportData.TotalDurationInSeconds = compilationTimeSpan.TotalSeconds;
+            
             foreach (CompilationData compilationData in iterativeData.iterations) {
                 foreach (AssemblyCompilationData assemblyData in compilationData.compilationData) {
                     AssemblyExportData.DataEntry entry = new AssemblyExportData.DataEntry {
