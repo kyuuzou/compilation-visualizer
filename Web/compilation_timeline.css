@@ -81,13 +81,22 @@ span {
 	background-image: linear-gradient(to right, rgb(0, 123, 2) 0%, rgb(0, 217, 54) 100%);
 }
 
-.dependant .text-above {
+.directDependant .text-above {
 	color: red !important;
 }
 
-.dependant span {
+.directDependant span {
     /*background-color: red !important;*/
 	background-image: linear-gradient(to right, rgb(103, 0, 0) 0%, rgb(218, 0, 0) 100%);
+}
+
+.indirectDependant .text-above {
+	color: orange !important;
+}
+
+.indirectDependant span {
+    /*background-color: red !important;*/
+	background-image: linear-gradient(to right, rgb(178, 121, 0) 0%, rgb(242, 141, 0) 100%);
 }
 
 .hidden {

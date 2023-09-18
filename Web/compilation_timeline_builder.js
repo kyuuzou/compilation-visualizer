@@ -146,19 +146,13 @@ function handleSpanClick(entryContainer, entry) {
         }
     });
 
-    // Set the colors for the dependants containers to dependant
-    entry.Dependants.forEach((dependantName) => {
-        const dependantContainer = entryContainerDict[dependantName];
-        if (dependantContainer) {
-            setDependantColors(dependantContainer);
-        }
-    });    
+    setRecursiveDependantColors(entry);
 }
 
 // Function to reset colors for all containers
 function clearSelection() {
     Object.values(entryContainerDict).forEach((container) => {
-        container.classList.remove("dependency", "dependant", "hidden", "selected");
+        container.classList.remove("dependency", "directDependant", "indirectDependant", "hidden", "selected");
     });
 
     const clearSelectionButton = document.getElementById("clearSelectionButton");
@@ -188,9 +182,28 @@ function setDependencyColors(container) {
 }
 
 // Function to set dependant colors for a container
-function setDependantColors(container) {
+function setDependantColors(container, directDependant) {
     container.classList.remove("hidden");
-    container.classList.add("dependant");
+    container.classList.add(directDependant ? "directDependant" : "indirectDependant");
+}
+
+// Function to recursively set dependant colors for an entry and its dependants
+function setRecursiveDependantColors(entry, depth = 0) {
+    // Limit recursion depth to prevent infinite loop
+    if (depth >= 256) {
+        return;
+    }
+
+    entry.Dependants.forEach((dependantName) => {
+        const dependantEntry = compilationData.Entries.find((e) => e.Name === dependantName);
+        if (dependantEntry) {
+            const dependantContainer = entryContainerDict[dependantName];
+            if (dependantContainer) {
+                setDependantColors(dependantContainer, depth === 0);
+                setRecursiveDependantColors(dependantEntry, depth + 1);
+            }
+        }
+    });
 }
 
 function createClearSelectionButton() {
