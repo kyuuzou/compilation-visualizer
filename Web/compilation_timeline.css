@@ -1,0 +1,100 @@
+body {
+    font-family: sans-serif;
+    background-color: #0F0F0F;
+    color: #AAAAAA;
+}
+
+#canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 10px;
+}
+
+.entry-container {
+    position: relative;
+    white-space: nowrap;
+    margin-top: 10px;
+	margin-left: 10px;
+}
+
+.text-above {
+    text-align: left;
+    padding: 15px 0px 0px 0px;
+    background-color: transparent;
+    color: #DEDEDE;
+}
+
+span {
+    position: absolute;
+    white-space: nowrap;
+    height: 10px;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+.fast {
+    /*background-color: rgb(41, 134, 41);*/
+	background-image: linear-gradient(to right, rgb(0, 123, 2) 0%, rgb(0, 217, 54) 100%);
+}
+
+.medium {
+    /*background-color: rgb(200, 200, 0);*/
+	background-image: linear-gradient(to right, rgb(122, 118, 1) 0%, rgb(221, 214, 0) 100%);
+}
+
+.slow {
+    /*background-color: rgb(217, 61, 61);*/
+	background-image: linear-gradient(to right, rgb(103, 0, 0) 0%, rgb(218, 0, 0) 100%);
+}
+
+.title {
+    position: relative;
+    background-color: transparent;
+    color: #DEDEDE;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.summary {
+    position: relative;
+    background-color: transparent;
+    color: #DEDEDE;
+    padding: 10px;
+}
+
+.selected {
+	font-size: 1.4em;
+}
+
+.selected span {
+    /*background-color: gray !important;*/
+	background-image: linear-gradient(to right, rgb(127, 127, 127) 0%, rgb(244, 244, 244) 100%);
+}
+
+.dependency .text-above {
+	color: greenyellow !important;
+}
+
+.dependency span {
+    /*background-color: greenyellow !important;*/
+	background-image: linear-gradient(to right, rgb(0, 123, 2) 0%, rgb(0, 217, 54) 100%);
+}
+
+.dependant .text-above {
+	color: red !important;
+}
+
+.dependant span {
+    /*background-color: red !important;*/
+	background-image: linear-gradient(to right, rgb(103, 0, 0) 0%, rgb(218, 0, 0) 100%);
+}
+
+.hidden {
+    display: none !important;
+}
+
+button {
+	margin-left: 10px;
+    font-size: 1.1em;
+}
