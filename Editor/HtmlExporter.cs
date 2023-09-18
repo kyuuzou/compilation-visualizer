@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEditor.Compilation;
@@ -26,7 +27,7 @@ namespace Needle.CompilationVisualizer {
         public double TotalDurationInSeconds;
     }
     
-    internal class JsonExporter : IPostprocessBuildWithReport {
+    internal class HtmlExporter : IPostprocessBuildWithReport {
         
         public int callbackOrder => int.MaxValue;
 
@@ -36,14 +37,19 @@ namespace Needle.CompilationVisualizer {
         public void OnPostprocessBuild(BuildReport report) {
             // Terrible hack to give Unity enough time to export fullprofile.json
             Thread.Sleep(1000);
-            ExportToJson();
+            ExportToHtml();
         }
 
-        internal static void ExportToJson() {
-            ExportToJson(CompilationData.GetAll());
+        internal static void ExportToHtml() {
+            ExportToHtml(CompilationData.GetAll());
         }
 
-        internal static void ExportToJson(CompilationData.IterativeCompilationData iterativeData) {
+        internal static void ExportToHtml(CompilationData.IterativeCompilationData iterativeData) {
+            string sourceFolder = Path.GetFullPath("Packages/com.needle.compilation-visualizer/Web/");
+            string destinationFolder = Path.GetFullPath("../Logs/Web/");
+            
+            CopyFolder(sourceFolder, destinationFolder);
+
             AssemblyExportData exportData = new AssemblyExportData();
             TimeSpan compilationTimeSpan = iterativeData.iterations.Last().CompilationFinished - iterativeData.iterations.First().CompilationStarted;
             exportData.TotalDurationInSeconds = compilationTimeSpan.TotalSeconds;
@@ -72,13 +78,46 @@ namespace Needle.CompilationVisualizer {
                 }
             }
 
-            string jsonString = JsonUtility.ToJson(exportData, true);
-            jsonString = $"{jsPrefix}{jsonString}{jsSuffix}";
+            string javascript = JsonUtility.ToJson(exportData, true);
+            javascript = $"{jsPrefix}{javascript}{jsSuffix}";
             
-            string path = "../Logs/compilation_timeline.js";
-            File.WriteAllText(path, jsonString);
+            string path = Path.Combine(destinationFolder, "compilation_timeline.js");
+            File.WriteAllText(path, javascript);
             
-            Debug.Log($"Exported compilation timeline to {Path.GetFullPath(path)}: {jsonString}");
+            Debug.Log($"Exported compilation timeline to {path}: {javascript}");
+        }
+        
+        private static void CopyFolder(string sourcePath, string destinationPath) {
+            try {
+                if (!Directory.Exists(sourcePath)) {
+                    Console.WriteLine("Source directory does not exist.");
+                    return;
+                }
+
+                if (!Directory.Exists(destinationPath)) {
+                    Directory.CreateDirectory(destinationPath);
+                }
+
+                string[] files = Directory.GetFiles(sourcePath);
+
+                foreach (string file in files) {
+                    string fileName = Path.GetFileName(file);
+                    string destFile = Path.Combine(destinationPath, fileName);
+                    File.Copy(file, destFile, true);
+                }
+
+                string[] subdirectories = Directory.GetDirectories(sourcePath);
+
+                foreach (string subdirectory in subdirectories) {
+                    string folderName = Path.GetFileName(subdirectory);
+                    string destDirectory = Path.Combine(destinationPath, folderName);
+                    CopyFolder(subdirectory, destDirectory);
+                }
+
+                Console.WriteLine("Folder copied successfully.");
+            } catch (Exception e) {
+                Console.WriteLine($"An error occurred: {e.Message}");
+            }
         }
     }
 }

@@ -272,9 +272,9 @@ namespace Needle.CompilationVisualizer
                 GUIUtility.ExitGUI();
             }
 
-            if (GUILayout.Button("Export to JSON", EditorStyles.toolbarButton)) 
+            if (GUILayout.Button("Export to HTML", EditorStyles.toolbarButton)) 
             {
-                JsonExporter.ExportToJson(data);
+                HtmlExporter.ExportToHtml(data);
                 GUIUtility.ExitGUI();
             }
 
