@@ -30,6 +30,9 @@ namespace Needle.CompilationVisualizer {
         
         public int callbackOrder => int.MaxValue;
 
+        private static string jsPrefix = "const compilationData = ";
+        private static string jsSuffix = ";";
+        
         public void OnPostprocessBuild(BuildReport report) {
             // Terrible hack to give Unity enough time to export fullprofile.json
             Thread.Sleep(1000);
@@ -70,7 +73,9 @@ namespace Needle.CompilationVisualizer {
             }
 
             string jsonString = JsonUtility.ToJson(exportData, true);
-            string path = "../Logs/compilation_timeline.json";
+            jsonString = $"{jsPrefix}{jsonString}{jsSuffix}";
+            
+            string path = "../Logs/compilation_timeline.js";
             File.WriteAllText(path, jsonString);
             
             Debug.Log($"Exported compilation timeline to {Path.GetFullPath(path)}: {jsonString}");
