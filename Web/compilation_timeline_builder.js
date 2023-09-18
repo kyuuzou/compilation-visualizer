@@ -20,34 +20,6 @@ function calculateDurations(entries) {
     return { shortestDuration, longestDuration };
 }
 
-function calculateTotalDuration(entries) {
-    let earliestStartTime = Number.MAX_SAFE_INTEGER;
-    let latestEndTime = Number.MIN_SAFE_INTEGER;
-
-    entries.forEach(entry => {
-        // Convert StartTimeInTicks to seconds
-        const startTimeInSeconds = entry.StartTimeInTicks / 10000000.0;
-
-        // Convert DurationInSeconds to a JavaScript number (if it's not already)
-        const durationInSeconds = Number(entry.DurationInSeconds);
-
-        const endTime = startTimeInSeconds + durationInSeconds;
-
-        if (startTimeInSeconds < earliestStartTime) {
-            earliestStartTime = startTimeInSeconds;
-        }
-
-        if (endTime > latestEndTime) {
-            latestEndTime = endTime;
-        }
-    });
-
-    let totalDurationInSeconds = latestEndTime - earliestStartTime;
-    
-    console.log("Total Duration:", totalDurationInSeconds);
-    return { totalDurationInSeconds, earliestStartTime };
-}
-
 // Function to set the color of a span based on duration
 function setStyleBasedOnDuration(span, shortest, longest, duration) {
     // Calculate thresholds for dividing into thirds as percentages
@@ -230,8 +202,7 @@ document.addEventListener("DOMContentLoaded", function () {
         compilationData.Entries
     );
 
-    // Calculate the entire duration of the compilation
-    const { totalDurationInSeconds, earliestStartTime } = calculateTotalDuration(compilationData.Entries);
+    const totalDurationInSeconds = compilationData.TotalDurationInSeconds;
         
     addSummary(canvasDiv, totalDurationInSeconds);
  
